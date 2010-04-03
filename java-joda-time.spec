@@ -16,7 +16,7 @@
 Summary:	Java JDK Date and Time replacement
 Name:		java-joda-time
 Version:	1.6
-Release:	0.1
+Release:	1
 License:	Apache v2.0
 Group:		Libraries/Java
 Source0:	http://downloads.sourceforge.net/project/joda-time/joda-time/%{version}/%{srcname}-%{version}-src.tar.gz
