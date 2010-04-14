@@ -3,6 +3,7 @@
 #
 # Conditional build:
 %bcond_without	javadoc		# don't build javadoc
+%bcond_without	source		# don't build source jar
 
 %if "%{pld_release}" == "ti"
 %bcond_without	java_sun	# build with gcj
@@ -27,10 +28,10 @@ BuildRequires:	ant
 %{?with_java_sun:BuildRequires:	java-sun}
 # NOT only for tests. If not present ant will try to download it.
 BuildRequires:	java-junit
-BuildRequires:	jpackage-utils
+BuildRequires:	jpackage-utils >= 1.7.5-2
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpm-javaprov
-BuildRequires:	rpmbuild(macros) >= 1.300
+BuildRequires:	rpmbuild(macros) >= 1.555
 # for %{_javadir}
 Requires:	jpackage-utils
 BuildArch:	noarch
@@ -57,6 +58,18 @@ Dokumentacja do %{name}.
 %description javadoc -l fr.UTF-8
 Javadoc pour %{name}.
 
+%package source
+Summary:	Source files for %{srcname}
+Summary(pl.UTF-8):	Źródła %{srcname}
+Group:		Documentation
+Requires:	jpackage-utils
+
+%description source
+Source files for %{srcname}.
+
+%description source -l pl.UTF-8
+Źródła %{srcname}.
+
 %prep
 %setup -q -n %{srcname}-%{version}-src
 
@@ -67,6 +80,12 @@ JUNIT_JAR=$(find-jar junit)
 
 %ant -Djunit.jar=$JUNIT_JAR
 %{?with_javadoc:%ant -Djunit.jar=$JUNIT_JAR javadoc}
+
+# source jar
+%if %{with source}
+cd src
+%jar cf ../%{srcname}.src.jar $(find -name '*.java')
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -81,6 +100,12 @@ ln -s %{srcname}-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{srcname}.jar
 install -d $RPM_BUILD_ROOT%{_javadocdir}/%{srcname}-%{version}
 cp -a build/docs/* $RPM_BUILD_ROOT%{_javadocdir}/%{srcname}-%{version}
 ln -s %{srcname}-%{version} $RPM_BUILD_ROOT%{_javadocdir}/%{srcname} # ghost symlink
+%endif
+
+# source jar
+install -d $RPM_BUILD_ROOT%{_javasrcdir}
+%if %{with source}
+cp %{srcname}.src.jar $RPM_BUILD_ROOT%{_javasrcdir}/%{srcname}.src.jar
 %endif
 
 %clean
@@ -98,4 +123,10 @@ ln -nfs %{srcname}-%{version} %{_javadocdir}/%{srcname}
 %defattr(644,root,root,755)
 %{_javadocdir}/%{srcname}-%{version}
 %ghost %{_javadocdir}/%{srcname}
+%endif
+
+%if %{with source}
+%files source
+%defattr(644,root,root,755)
+%{_javasrcdir}/%{srcname}.src.jar
 %endif
