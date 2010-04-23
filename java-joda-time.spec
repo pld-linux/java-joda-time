@@ -5,12 +5,6 @@
 %bcond_without	javadoc		# don't build javadoc
 %bcond_without	source		# don't build source jar
 
-%if "%{pld_release}" == "ti"
-%bcond_without	java_sun	# build with gcj
-%else
-%bcond_with	java_sun	# build with java-sun
-%endif
-#
 %include	/usr/lib/rpm/macros.java
 
 %define		srcname		joda-time
@@ -24,12 +18,10 @@ Source0:	http://downloads.sourceforge.net/project/joda-time/joda-time/%{version}
 # Source0-md5:	8e59de208eb994010575e34179f2b580
 URL:		http://joda-time.sourceforge.net/
 BuildRequires:	ant
-%{!?with_java_sun:BuildRequires:	java-gcj-compat-devel}
-%{?with_java_sun:BuildRequires:	java-sun}
+BuildRequires:	jdk
 # NOT only for tests. If not present ant will try to download it.
 BuildRequires:	java-junit
 BuildRequires:	jpackage-utils >= 1.7.5-2
-BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpm-javaprov
 BuildRequires:	rpmbuild(macros) >= 1.555
 # for %{_javadir}
