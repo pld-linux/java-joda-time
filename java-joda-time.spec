@@ -5,7 +5,6 @@
 %bcond_without	javadoc		# don't build javadoc
 %bcond_without	source		# don't build source jar
 
-%include	/usr/lib/rpm/macros.java
 
 %define		srcname		joda-time
 Summary:	Java JDK Date and Time replacement
